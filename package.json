@@ -11,6 +11,8 @@
   "license": "ISC",
   "dependencies": {
     "canvas": "^2.4.1",
-    "tumult": "^3.0.11"
+    "jimp": "^0.6.1",
+    "tumult": "^3.0.11",
+    "victor": "^1.1.0"
   }
 }

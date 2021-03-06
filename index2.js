@@ -184,7 +184,7 @@ let generate = async ({
     const ctx = canvas.getContext ('2d');
     const noise = new tumult.Simplex1 (seed);
 
-    minGlow = radius * 1.2;
+    // minGlow = radius * 1.2;
 
     // draw the background
     drawBackground (width, height, ctx);
@@ -201,6 +201,11 @@ let generate = async ({
     // random ();
     maxGlowMultiplier = maxGlowMultiplier + random () * 100;
     radius = Math.floor (70 + random () * 100);
+
+    if (radius < 100) console.log ('small');
+    else if (radius < 130) console.log ('medium');
+    else if (radius < 160) console.log ('large');
+    else console.log ('giant');
 
     // glow
     drawGlow (width, height, ctx, minGlow, maxGlowMultiplier)
@@ -271,15 +276,40 @@ let generate = async ({
         out.on ('finish', () => {
             resolve ();
         });
-    })
-}
+    });
+};
+
+/*
+stats:
+LIFE: NONE / MICROBES / AQUATIC CREATURES / MAMMALS / HUMANS / ADVANCED CIVILIZATION
+SIZE: SMALL / MEDIUM / LARGE / GIANT
+COLOR: RED / BLUE / BROWN / YELLOW / RAINBOW / ETC
+GLOW COLOR: []
+
+
+< 100 (small)
+100-130 (medium)
+130-160 (large)
+> 160 (giant)
+*/
+
+
 
 
 generate ({
-    seed: process.argv [2] || "planet",
+    seed: process.argv [2] || 'luna',
     output: './outputs/1.png',
     reliefMultiplier: 0,
     outline: false
 }).then (res => {
 
 });
+
+
+// cool ones
+/*
+"andrei"
+"6"
+1
+
+*/

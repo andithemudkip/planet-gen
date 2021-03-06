@@ -69,7 +69,7 @@ for (let i = 0; i < numNodes; i++) {
     let g = Math.floor(Math.random() * 255);
     let b = Math.floor(Math.random() * 255);
     let color = `rgba(${r}, ${g}, ${b}, $)`;
-    console.log (n, opacity, color, color.replace ('$', Math.abs (n) / opac));
+    console.log (n, opac, color, color.replace ('$', Math.abs (n) / opac));
     grd.addColorStop(0, color.replace('$', Math.abs(n) / opac));
     grd.addColorStop(1, color.replace('$', '0'));
 

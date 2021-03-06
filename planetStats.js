@@ -15,22 +15,39 @@ inhabitants:
 
 */
 
+// let pickInhabitants = () => {
+//     let n = Math.random();
+//     if(n < .20) {
+//         return 'none';
+//     } else if (n < .45) {
+//         return 'microbes';
+//     } else if (n < .60) {
+//         return 'fish';
+//     } else if (n < .70) {
+//         return 'mammals';
+//     } else if (n < .8) {
+//         return 'colonies of apes';
+//     } else if (n < .95) {
+//         return 'human-like';
+//     } else {
+//         return 'advanced alien civilization';
+//     }
+// }
+
 let pickInhabitants = () => {
-    let n = Math.random();
-    if(n < .20) {
+    let n = Math.random ();
+    
+    if (n <= .9) {
         return 'none';
-    } else if (n < .45) {
-        return 'microbes';
-    } else if (n < .60) {
-        return 'fish';
-    } else if (n < .70) {
-        return 'mammals';
-    } else if (n < .8) {
-        return 'colonies of apes';
-    } else if (n < .95) {
-        return 'human-like';
     } else {
+        n = Math.random ();
+        if (n <= .5) return 'micro-organisms';
+        if (n <= .7) return 'aquatic creatures';
+        if (n <= .8) return 'mammals';
+        if (n <= .9) return 'colonies of apes';
+        if (n <= .95) return 'human-like';
         return 'advanced alien civilization';
+
     }
 }
 

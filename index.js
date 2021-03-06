@@ -1,8 +1,8 @@
+// canvas was ^2.4.1
 const { createCanvas, loadImage, registerFont } = require('canvas');
 
 registerFont('googlefont.ttf', { family: 'Rationale' });
-const canvas = createCanvas(512, 560); //512
-const ctx = canvas.getContext('2d');
+
 const tumult = require('tumult');
 const nameGen = require('./genName');
 const Vector = require('victor');
@@ -10,25 +10,22 @@ const Jimp = require('jimp');
 const mapGen = require('./mapGen2');
 const planetStats = require('./planetStats');
 
-const noise = new tumult.Simplex1(Math.random() * 100);
-
 const fs = require('fs');
 
 
+// const canvas = createCanvas(512, 560); //512
+const canvas = createCanvas(512, 512); //512
+const ctx = canvas.getContext('2d');
+const noise = new tumult.Simplex1(Math.random() * 100);
+
 //background
 ctx.beginPath();
-ctx.rect(0, 0, 512, 560); //512
+// ctx.rect(0, 0, 512, 560); //512
+ctx.rect(0, 0, 512, 512); //512
 ctx.fillStyle = "black";
 ctx.fill();
-// ctx.closePath();
 
-//ellipse
-// ctx.beginPath();
-// ctx.ellipse(252, 252, 150, 150, Math.PI, 0, 2 * Math.PI);
-// ctx.fillStyle = "rgba(255, 255, 255, 0)";
-// ctx.stroke();
-// ctx.fill();
-// ctx.closePath();
+
 let r = Math.floor(Math.random() * 255);
 let g = Math.floor(Math.random() * 255);
 let b = Math.floor(Math.random() * 255);
@@ -72,6 +69,7 @@ for (let i = 0; i < numNodes; i++) {
     let g = Math.floor(Math.random() * 255);
     let b = Math.floor(Math.random() * 255);
     let color = `rgba(${r}, ${g}, ${b}, $)`;
+    console.log (n, opacity, color, color.replace ('$', Math.abs (n) / opac));
     grd.addColorStop(0, color.replace('$', Math.abs(n) / opac));
     grd.addColorStop(1, color.replace('$', '0'));
 
@@ -103,7 +101,7 @@ let generatePlanet = (terrainimg, outpath) => {
         loadImage(terrainimg).then(img => {
             ctx.strokeStyle = "white";
             ctx.fillStyle = "blue";
-            ctx.drawImage(img, offset, offset, 300, 300);
+            // ctx.drawImage(img, offset, offset, 300, 300);
             ctx.globalCompositeOperation = 'hard-light';
             //color
             for (let i = 0; i < nodes.length; i++) {
@@ -111,6 +109,7 @@ let generatePlanet = (terrainimg, outpath) => {
                 ctx.fill();
             }
             //shadows
+            /*
             let rndx = Math.random() * 100 * Math.pow(-1, Math.round(Math.random()));
             let rndy = Math.random() * 100 * Math.pow(-1, Math.round(Math.random()));
             if (Math.random() < .25) { //original method
@@ -133,6 +132,7 @@ let generatePlanet = (terrainimg, outpath) => {
                 ctx.fillStyle = grd;
                 ctx.fill();
             }
+            */
 
             // if(Math.random() < .25) ctx.stroke();
             // ctx.stroke();
@@ -141,15 +141,16 @@ let generatePlanet = (terrainimg, outpath) => {
             //overlay stuff
             ctx.fillStyle = "white";
             ctx.font = '46px "Rationale"';
-            ctx.fillText(nameGen.toUpperCase(), 20, 50);
+            let name = nameGen.toUpperCase ();
+            // ctx.fillText(name, 20, 50);
             ctx.font = "20px Courier";
-            let stats = planetStats.getStats();
-            ctx.fillText(`TEMPERATURE: ${stats.temp}K (${(Number(stats.temp) - 273.15).toFixed(2)}ºC)`, 20, 450);
-            ctx.fillText(`ATMOSPHERE PRESSURE: ${stats.atmosphere.toUpperCase()}`, 20, 480);
-            ctx.fillText(`GRAVITY: ${stats.gravity.toUpperCase()}`, 20, 510);
-            ctx.fillText(`INHABITANTS: ${stats.inhabitants.toUpperCase()}`, 20, 540);
+            // let stats = planetStats.getStats();
+            // ctx.fillText(`TEMPERATURE: ${stats.temp}K (${(Number(stats.temp) - 273.15).toFixed(2)}ºC)`, 20, 450);
+            // ctx.fillText(`ATMOSPHERE PRESSURE: ${stats.atmosphere.toUpperCase()}`, 20, 480);
+            // ctx.fillText(`GRAVITY: ${stats.gravity.toUpperCase()}`, 20, 510);
+            // ctx.fillText(`INHABITANTS: ${stats.inhabitants.toUpperCase()}`, 20, 540);
             // console.log(stats);
-            const out = fs.createWriteStream(__dirname + `/${outpath}`);
+            const out = fs.createWriteStream(__dirname + `/${outpath}-${name}.png`);
             const stream = canvas.createPNGStream();
             stream.pipe(out);
             out.on('finish', () => resolve());
@@ -158,7 +159,7 @@ let generatePlanet = (terrainimg, outpath) => {
 }
 
 
-let power = 1.1;
+// let power = 1.1;
 
 function distortPoint(p) {
     let theta = Math.atan2(p.y, p.x);
@@ -232,15 +233,6 @@ let distortImage = (inpath, outpath, r) => {
 }
 
 
-/**
- * 
- * @param {number} num Number of nodes
- * @param {number} w Width
- * @param {number} radius Radius
- * @param {number} offx x offset [x position]
- * @param {number} offy y offset [y position]
- */
-
 function getNodes(num, w, radius, offx, offy) {
     let nodes1 = [];
     for (let i = 0; i < num; i++) {
@@ -293,28 +285,28 @@ function drawLandMass(n1, n2, cp1, cp2) {
     ctx.fill();
 }
 
-// console.log(mapGen);
-mapGen.generate({
-    width: 512,
-    height: 512,
-    seed: Date.now(),
-    octaves: Math.round(Math.random() * 9) + 1, // rand(1,10) (was 10)
-    period: Math.round(Math.random() * 224) + 32, // rand(32, 256) (was 64)
-    offset: 1,
-    filename: __dirname + '/map.png'
-}).then(() => {
-    console.log('generated');
-    setTimeout(() => {
-        distortImage('map.png', 'map_distorted.png', 2).then(() => {
-            console.log('distorted');
-            setTimeout(() => {
-                generatePlanet('map_distorted.png', 'output.png').then(() => {
-                    console.log('saved image');
-                })
-            }, 200);
-        });
-    }, 200);
+    mapGen.generate({
+        width: 512,
+        height: 512,
+        seed: Date.now(),
+        octaves: Math.round(Math.random() * 9) + 1, // rand(1,10) (was 10)
+        period: Math.round(Math.random() * 224) + 32, // rand(32, 256) (was 64)
+        offset: 1,
+        filename: __dirname + '/map.png'
+    }).then (() => {
+        let n = fs.readdirSync ('./outputs').length;
+        // console.log ();
+        setTimeout(() => {
+            distortImage('map.png', 'map_distorted.png', 2).then(() => {
+                setTimeout(() => {
+                    generatePlanet('map_distorted.png', `./outputs/${n.toString ().padStart (3, '0')}`).then(() => {
+                        console.log('saved image ' + n);
 
-});
+                    })
+                }, 200);
+            });
+        }, 200);
+    });
+
 
 // console.log(nameGen);

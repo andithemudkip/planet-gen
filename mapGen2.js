@@ -88,7 +88,14 @@ function terrapaintFactory () {
             //   target.appendChild(canvas)
             this.canvas = canvas
         })
-    
+    }
+
+    Map.prototype.createAndGetBuffer = function (width, height) {
+      var ctx = canvas.getContext('2d')
+      canvas.width = width;
+      canvas.height = height;
+      ctx.putImageData (this.compute (width, height), 0, 0)
+      return canvas.toBuffer ();
     }
     // Map.prototype.loop = function () {
     //   var that = this
@@ -546,20 +553,32 @@ function customColormap(val) {
 //   map.create('', 128, 128);
 module.exports = {
     generate : config => {
-      return new Promise((resolve, reject) => {
-          seed(config.seed);
-          pickedColors = cColors[Math.floor(Math.random() * cColors.length)];
+      return new Promise ((resolve, reject) => {
+          seed (seed);
+          pickedColors = cColors [Math.floor (Math.random () * cColors.length)];
           // config.colormap = islandColormap;
           config.colormap = customColormap;
-          canvas = createCanvas(config.width, config.height);
-          ctx = canvas.getContext('2d');
+          canvas = createCanvas (config.width, config.height);
+          ctx = canvas.getContext ('2d');
           let algos = [simplex2, perlin2];
-          let pickedAlgo = algos[Math.floor(Math.random() * algos.length)];
-          let map = terrapaintFactory().map(pickedAlgo, config);
-          out = fs.createWriteStream(config.filename);
+          let pickedAlgo = algos [Math.floor (Math.random () * algos.length)];
+          let map = terrapaintFactory ().map(pickedAlgo, config);
+          out = fs.createWriteStream (config.filename);
           map.create('', config.width, config.height).then(() => {
               resolve();
           })
       })
+    },
+    generate2: config => {
+      seed (config.seed);
+      pickedColors = cColors [Math.floor (config.random () * cColors.length)];
+      config.colormap = customColormap;
+      canvas = createCanvas (config.width, config.height);
+      ctx = canvas.getContext ('2d');
+      let algos = [simplex2, perlin2];
+      let pickedAlgo = algos [Math.floor (config.random () * algos.length)];
+      let map = terrapaintFactory ().map (pickedAlgo, config);
+      let buf = map.createAndGetBuffer (config.width, config.height);
+      return buf;
     }
 }

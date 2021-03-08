@@ -8,53 +8,53 @@ var nm6 = ["una","ion","iea","iri","illes","ides","agua","olla","inda","eshan","
 var nm7 = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","0","1","2","3","4","5","6","7","8","9","0","1","2","3","4","5","6","7","8","9","","","","","","","","","","","","","",""];
 var br = "";
 
-function nameGen(){
+function nameGen (random = Math.random){
 	for(i = 0; i < 10; i++){
 		if(i < 2){
-			rnd = Math.random() * nm1.length | 0;
-			rnd2 = Math.random() * nm2.length | 0;
-			rnd3 = Math.random() * nm3.length | 0;
+			rnd = random () * nm1.length | 0;
+			rnd2 = random () * nm2.length | 0;
+			rnd3 = random () * nm3.length | 0;
 			while(nm1[rnd] === nm3[rnd3]){
-			rnd3 = Math.random() * nm3.length | 0;
+			rnd3 = random () * nm3.length | 0;
 			}
-			rnd4 = Math.random() * nm4.length | 0;
-			rnd5 = Math.random() * nm5.length | 0;
+			rnd4 = random () * nm4.length | 0;
+			rnd5 = random () * nm5.length | 0;
 			names = nm1[rnd] + nm2[rnd2] + nm3[rnd3] + nm4[rnd4] + nm5[rnd5];
 		}else if(i < 4){
-			rnd = Math.random() * nm1.length | 0;
-			rnd2 = Math.random() * nm2.length | 0;
-			rnd3 = Math.random() * nm3.length | 0;
+			rnd = random () * nm1.length | 0;
+			rnd2 = random () * nm2.length | 0;
+			rnd3 = random () * nm3.length | 0;
 			while(nm1[rnd] === nm3[rnd3]){
-			rnd3 = Math.random() * nm3.length | 0;
+			rnd3 = random () * nm3.length | 0;
 			}
-			rnd4 = Math.random() * nm6.length | 0;
+			rnd4 = random () * nm6.length | 0;
 			names = nm1[rnd] + nm2[rnd2] + nm3[rnd3] + nm6[rnd4];
 		}else if(i < 6){
-			rnd = Math.random() * nm1.length | 0;
-			rnd4 = Math.random() * nm4.length | 0;
-			rnd5 = Math.random() * nm5.length | 0;
+			rnd = random () * nm1.length | 0;
+			rnd4 = random () * nm4.length | 0;
+			rnd5 = random () * nm5.length | 0;
 			names = nm1[rnd] + nm4[rnd4] + nm5[rnd5];
 		}else if(i < 8){
-			rnd = Math.random() * nm1.length | 0;
-			rnd2 = Math.random() * nm2.length | 0;
-			rnd3 = Math.random() * nm3b.length | 0;
+			rnd = random () * nm1.length | 0;
+			rnd2 = random () * nm2.length | 0;
+			rnd3 = random () * nm3b.length | 0;
 			while(nm1[rnd] === nm3b[rnd3]){
-			rnd3 = Math.random() * nm3b.length | 0;
+			rnd3 = random () * nm3b.length | 0;
 			}
-			rnd4 = Math.random() * nm2.length | 0;
-			rnd5 = Math.random() * nm5.length | 0;
+			rnd4 = random () * nm2.length | 0;
+			rnd5 = random () * nm5.length | 0;
 			names = nm3b[rnd3] + nm2[rnd2] + nm1[rnd] + nm2[rnd4] + nm5[rnd5];
 		}else{
-			rnd = Math.random() * nm3b.length | 0;
-			rnd2 = Math.random() * nm6.length | 0;
-			rnd3 = Math.random() * nm7.length | 0;
-			rnd4 = Math.random() * nm7.length | 0;
-			rnd5 = Math.random() * nm7.length | 0;
-			rnd6 = Math.random() * nm7.length | 0;
+			rnd = random () * nm3b.length | 0;
+			rnd2 = random () * nm6.length | 0;
+			rnd3 = random () * nm7.length | 0;
+			rnd4 = random () * nm7.length | 0;
+			rnd5 = random () * nm7.length | 0;
+			rnd6 = random () * nm7.length | 0;
 			names = nm3b[rnd] + nm6[rnd2] + " " + nm7[rnd3] + nm7[rnd4] + nm7[rnd5] + nm7[rnd6];
 		}
     }
     return names;
 }
 
-module.exports = nameGen()
+module.exports = nameGen;

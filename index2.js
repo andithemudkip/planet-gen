@@ -3,6 +3,8 @@ const Vector = require ('victor');
 const Jimp = require ('jimp');
 const mapGen = require ('./mapGen2');
 const path = require ('path');
+const generateName = require ('./genName');
+const readline = require ('readline-sync');
 
 const fs = require ('fs');
 const { createCanvas, registerFont, loadImage } = require ('canvas');
@@ -165,6 +167,12 @@ let generatePlanet = async (ctx, offset, radius, nodes, terrainImage) => {
     ctx.restore ();
 }
 
+let initRandom = seed => {
+    const s = xmur3 (seed);
+    random = sfc32 (s (), s (), s (), s ());
+    console.log ('inited random');
+}
+
 let generate = async ({
         width = 512,
         height = 512,
@@ -174,11 +182,18 @@ let generate = async ({
         maxGlowMultiplier = 200,
         radius = 128,
         numNodes = 128,
+        doInitRandom = true,
         reliefMultiplier = 1,
         outline = false
     }) => {
-    const s = xmur3 (seed);
-    random = sfc32 (s (), s (), s (), s ());
+    const stats = {
+        size: '',
+        name: ''
+    };
+    // const s = xmur3 (seed);
+    // random = sfc32 (s (), s (), s (), s ());
+
+    if (doInitRandom) initRandom (seed);
 
     const canvas = createCanvas (width, height);
     const ctx = canvas.getContext ('2d');
@@ -201,11 +216,6 @@ let generate = async ({
     // random ();
     maxGlowMultiplier = maxGlowMultiplier + random () * 100;
     radius = Math.floor (70 + random () * 100);
-
-    if (radius < 100) console.log ('small');
-    else if (radius < 130) console.log ('medium');
-    else if (radius < 160) console.log ('large');
-    else console.log ('giant');
 
     // glow
     drawGlow (width, height, ctx, minGlow, maxGlowMultiplier)
@@ -267,7 +277,6 @@ let generate = async ({
 
     generatePlanet (ctx, offset, radius, nodes, distorted);
 
-
     // save the image
     const out = fs.createWriteStream (path.join (__dirname, output));
     const stream = canvas.createPNGStream ();
@@ -277,6 +286,18 @@ let generate = async ({
             resolve ();
         });
     });
+
+    // determine the size
+    if (radius < 100) stats.size = 'small';
+    else if (radius < 130) stats.size = 'medium';
+    else if (radius < 160) stats.size = 'large';
+    else stats.size = 'giant';
+
+    // generate the name
+    // stats.name = generateName (random);
+    // stats.name = stats.name [0].toUpperCase () + stats.name.substring (1);
+
+    return stats;
 };
 
 /*
@@ -293,18 +314,34 @@ GLOW COLOR: []
 > 160 (giant)
 */
 
+// generate ({
+//     seed: process.argv [2] || 'luna',
+//     output: './outputs/1.png',
+//     reliefMultiplier: 0,
+//     outline: false
+// }).then (res => {
+//     console.log (res);
+// });
 
+// let statsForEach = [];
 
+// let generateMany = (n, i = 0) => {
+//     if (i < n) {
+//         let seed = (i).toString ();
+//         generate ({
+//             seed: seed,
+//             output: `./outputs/${seed}.png`,
+//             reliefMultiplier: 0,
+//             outline: false
+//         }).then (res => {
+//             console.log (`generated ${seed}`);
+//             statsForEach.push (res);
+//             generateMany (n, ++i);
+//         });
+//     };
+// }
 
-generate ({
-    seed: process.argv [2] || 'luna',
-    output: './outputs/1.png',
-    reliefMultiplier: 0,
-    outline: false
-}).then (res => {
-
-});
-
+// generateMany (512, 256);
 
 // cool ones
 /*
@@ -313,3 +350,27 @@ generate ({
 1
 
 */
+
+let i = 0;
+let s = 0;
+(async () => {
+    while (true) {
+        let seed = (s).toString ();
+        initRandom (seed);
+        let name = generateName (random);
+        let stats = await generate ({
+            seed: name,
+            doInitRandom: false,
+            output: './outputs/temp.png',
+            reliefMultiplier: 0,
+            outline: false
+        });
+        if (readline.keyInYN ('keep planet?')) {
+            fs.copyFileSync (path.join (__dirname, 'outputs', 'temp.png'), path.join (__dirname, 'outputs', `${(i).toString ().padStart (3, '0')}-${name}-${stats.size}.png`));
+            console.log (`saved ${i}`);
+            i++;   
+        }
+
+        s++;
+    }
+}) ();
